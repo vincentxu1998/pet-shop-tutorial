@@ -67,6 +67,80 @@ App = {
 
     bindEvents: function () {
         $(document).on('click', '.btn-adopt', App.handleAdopt);
+
+        let button = document.querySelector(".like-button");
+
+        button.addEventListener("click", function(e) {
+          e.preventDefault();
+          this.classList.toggle("active");
+          this.classList.add("animated");
+          generateClones(this);
+
+        });
+
+        $(document).on('click', '.like-button', App.handleLike);
+
+
+        function generateClones(button) {
+          let clones = randomInt(2, 4);
+          for (let it = 1; it <= clones; it++) {
+            let clone = button.querySelector("svg").cloneNode(true),
+              size = randomInt(5, 16);
+            button.appendChild(clone);
+            clone.setAttribute("width", size);
+            clone.setAttribute("height", size);
+            clone.style.position = "absolute";
+            clone.style.transition =
+              "transform 0.5s cubic-bezier(0.12, 0.74, 0.58, 0.99) 0.3s, opacity 1s ease-out .5s";
+            let animTimeout = setTimeout(function() {
+              clearTimeout(animTimeout);
+              clone.style.transform =
+                "translate3d(" +
+                (plusOrMinus() * randomInt(10, 25)) +
+                "px," +
+                (plusOrMinus() * randomInt(10, 25)) +
+                "px,0)";
+              clone.style.opacity = 0;
+            }, 1);
+            let removeNodeTimeout = setTimeout(function() {
+              clone.parentNode.removeChild(clone);
+              clearTimeout(removeNodeTimeout);
+            }, 900);
+            let removeClassTimeout = setTimeout( function() {
+              button.classList.remove("animated")
+            }, 600);
+          }
+        }
+
+
+        function plusOrMinus() {
+          return Math.random() < 0.5 ? -1 : 1;
+        }
+
+        function randomInt(min, max) {
+          return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+    },
+
+    markLiked: function(){
+        var likeInstance;
+
+        App.contracts.Favor.deployed().then(function (instance) {
+            likeInstance = instance;
+
+            return likeInstance.getFavors.call();
+        }).then(function (favors) {
+        // array integer
+            for (i = 0; i < favors.length; i++) {
+//                if (favors[i] !== '0x0000000000000000000000000000000000000000') {
+
+                 $('.panel-pet').eq(i).find('like-text').text(favors[i].toString());
+//                }
+            }
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+
     },
 
     markAdopted: function () {
@@ -84,6 +158,35 @@ App = {
             }
         }).catch(function (err) {
             console.log(err.message);
+        });
+    },
+
+    handleLike: function(event){
+        event.preventDefault();
+        console.log("handle");
+
+        var petId = parseInt($(event.target).data('id'));
+
+        var favorInstance;
+
+        web3.eth.getAccounts(function (error, accounts) {
+            if (error) {
+                console.log(error);
+            }
+            console.log(accounts);
+            var account = accounts[0];
+            console.log(account);
+
+            App.contracts.Favor.deployed().then(function (instance) {
+                favorInstance = instance;
+
+                // Execute adopt as a transaction by sending account
+                return favorInstance.like(petId, {from: account});
+            }).then(function (result) {
+                return App.markLiked();
+            }).catch(function (err) {
+                console.log(err.message);
+            });
         });
     },
 
