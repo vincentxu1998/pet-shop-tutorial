@@ -275,6 +275,9 @@ var contract = (function(module) {
         this[item.name].sendTransaction = Utils.promisifyFunction(contract[item.name].sendTransaction, constructor);
         this[item.name].request = contract[item.name].request;
         this[item.name].estimateGas = Utils.promisifyFunction(contract[item.name].estimateGas, constructor);
+        console.log("estimategase");
+        console.log(this[item.name].estimateGas);
+
       }
 
       if (item.type == "event") {
@@ -294,6 +297,8 @@ var contract = (function(module) {
     }, this, constructor);
 
     this.send = function(value) {
+      console.log("value");
+      console.log(value);
       return self.sendTransaction({value: value});
     };
 
