@@ -36,4 +36,13 @@ contract TestAdoption {
     Assert.equal(adopters[expectedPetId], expectedAdopter, "Owner of the expected pet should be this contract");
   }
 
+  function testRevertByPetId() public {
+    uint petId = adoption.revert(expectedPetId);
+    address adopter = adoption.getAdopters()[petId];
+    expectedAdopter = address(0);
+
+    Assert.equal(petId, expectedPetId, "Owner of the expected pet should be this contract");
+    Assert.equal(adopter, expectedAdopter, "Owner of the expected pet should be this contract");
+  }
+
 }

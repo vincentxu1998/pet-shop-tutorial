@@ -15,4 +15,17 @@ contract Adoption {
   function getAdopters() public view returns (address[16] memory) {
     return adopters;
   }
+
+  function revert(uint petId) public returns (uint) {
+    require(petId >= 0 && petId <= 15);
+
+    if (adopters[petId] == msg.sender){
+      adopters[petId] = address(0);
+      return petId;
+    }else{
+      return petId;
+    }
+
+  }
+
 }
