@@ -167,35 +167,6 @@ App = {
         });
     },
 
-    handleLike: function(event){
-        event.preventDefault();
-        console.log("handle");
-
-        var petId = parseInt($(event.target).data('id'));
-
-        var favorInstance;
-
-        web3.eth.getAccounts(function (error, accounts) {
-            if (error) {
-                console.log(error);
-            }
-            console.log(accounts);
-            var account = accounts[0];
-            console.log(account);
-
-            App.contracts.Favor.deployed().then(function (instance) {
-                favorInstance = instance;
-
-                // Execute adopt as a transaction by sending account
-                return favorInstance.like(petId, {from: account});
-            }).then(function (result) {
-                return App.markLiked();
-            }).catch(function (err) {
-                console.log(err.message);
-            });
-        });
-    },
-
     handleAdopt: function (event) {
         event.preventDefault();
 
