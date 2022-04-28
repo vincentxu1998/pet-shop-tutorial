@@ -15,6 +15,7 @@ App = {
                 petTemplate.find('.pet-age').text(data[i].age);
                 petTemplate.find('.pet-location').text(data[i].location);
                 petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+                petTemplate.find('.btn-revert').attr('data-id', data[i].id);
                 petTemplate.find('.like-text').attr('data-id', data[i].id);
                 petTemplate.find('.pet-price').text("$" + data[i].price);
                 petsRow.append(petTemplate.html());
@@ -60,6 +61,7 @@ App = {
             App.contracts.Adoption.setProvider(App.web3Provider);
 
             // Use our contract to retrieve and mark the adopted pets
+            App.getRevert();
             return App.markAdopted();
         });
 
@@ -81,51 +83,11 @@ App = {
     bindEvents: function () {
         $(document).on('click', '.btn-adopt', App.handleAdopt);
         $(document).on('click', '.like-button', App.handleLike);
+        $(document).on('click', '.btn-revert', App.handleRevert);
     },
 
      markLiked: function () {
         var likeInstance;
-
-
-        // function generateClones(button) {
-        //   let clones = randomInt(2, 4);
-        //   for (let it = 1; it <= clones; it++) {
-        //     let clone = button.querySelector("svg").cloneNode(true),
-        //       size = randomInt(5, 16);
-        //     button.appendChild(clone);
-        //     clone.setAttribute("width", size);
-        //     clone.setAttribute("height", size);
-        //     clone.style.position = "absolute";
-        //     clone.style.transition =
-        //       "transform 0.5s cubic-bezier(0.12, 0.74, 0.58, 0.99) 0.3s, opacity 1s ease-out .5s";
-        //     let animTimeout = setTimeout(function() {
-        //       clearTimeout(animTimeout);
-        //       clone.style.transform =
-        //         "translate3d(" +
-        //         (plusOrMinus() * randomInt(10, 25)) +
-        //         "px," +
-        //         (plusOrMinus() * randomInt(10, 25)) +
-        //         "px,0)";
-        //       clone.style.opacity = 0;
-        //     }, 1);
-        //     let removeNodeTimeout = setTimeout(function() {
-        //       clone.parentNode.removeChild(clone);
-        //       clearTimeout(removeNodeTimeout);
-        //     }, 900);
-        //     let removeClassTimeout = setTimeout( function() {
-        //       button.classList.remove("animated")
-        //     }, 600);
-        //   }
-        // }
-        //
-        //
-        // function plusOrMinus() {
-        //   return Math.random() < 0.5 ? -1 : 1;
-        // }
-        //
-        // function randomInt(min, max) {
-        //   return Math.floor(Math.random() * (max - min + 1) + min);
-        // }
 
         App.contracts.Favor.deployed().then(function (instance) {
             likeInstance = instance;
@@ -135,16 +97,87 @@ App = {
             for (i = 0; i < adopters.length; i++) {
                 let parent = $('.panel-pet').eq(i)[0];
                 parent.querySelector('.like-text').textContent = adopters[i].toString();
-                // button.classList.toggle("active");
-                // button.classList.add("animated");
-                // generateClones(button);
-                // }
             }
         }).catch(function (err) {
             console.log(err.message);
         });
     },
 
+    markRevert:function(){
+
+        var adoptionInstance;
+
+        App.contracts.Adoption.deployed().then(function (instance) {
+            adoptionInstance = instance;
+
+            return adoptionInstance.getAdopters.call();
+        }).then(function (adopters) {
+            console.log(adopters);
+            for (i = 0; i < adopters.length; i++) {
+                if (adopters[i] == '0x0000000000000000000000000000000000000000') {
+                    let parent = $('.panel-pet').eq(i)[0];
+                    parent.querySelector('.btn-revert').setAttribute('disabled', true);
+                    parent.querySelector('.btn-adopt').removeAttribute('disabled');
+                    parent.querySelector('.btn-adopt').textContent = "Adopt";
+                }
+            }
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+    },
+
+    getRevert: function(){
+
+        web3.eth.getAccounts(function (error, accounts) {
+            if (error) {
+                console.log(error);
+            }
+
+            account = accounts[0];
+            console.log("revert");
+            console.log(account);
+
+            var adoptionInstance;
+            var account;
+
+
+            App.contracts.Adoption.deployed().then(function (instance) {
+                console.log("hahahah iamin");
+                adoptionInstance = instance;
+                console.log("adoptioninstance");
+                console.log(adoptionInstance);
+
+                // Execute adopt as a transaction by sending account
+
+               return adoptionInstance.getAdopters.call();
+            }).then(function (adopters) {
+                // check whether the account has adopted any pets
+                console.log("adopters");
+                console.log(adopters);
+                console.log("account");
+                console.log(account);
+                for (i = 0; i < adopters.length; i++) {
+                    if (adopters[i] == account) {
+                        let parent = $('.panel-pet').eq(i)[0];
+                        console.log(parent.querySelector('.btn-revert'));
+//                        parent.querySelector('.btn-revert').setAttribute('editable', true);
+                        parent.querySelector('.btn-revert').removeAttribute('disabled');
+                        parent.querySelector('.btn-adopt').textContent = "Success";
+                        parent.querySelector('.btn-adopt').setAttribute('disabled', true);
+                    }
+                    else{
+                        let parent = $('.panel-pet').eq(i)[0];
+                        parent.querySelector('.btn-revert').setAttribute('disabled', true);
+                        parent.querySelector('.btn-adopt').removeAttribute('disabled');
+                        parent.querySelector('.btn-adopt').textContent = "Adopt";
+//                        parent.querySelector('.btn-revert').setAttribute('editable', false);
+                    }
+                }
+            }).catch(function (err) {
+                console.log(err.message);
+            });
+        });
+    },
 
     markAdopted: function () {
         var adoptionInstance;
@@ -159,12 +192,47 @@ App = {
                 if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
                     console.log("mark adopt");
                     console.log(i);
-                    $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
+                    let parent = $('.panel-pet').eq(i)[0];
+                    parent.querySelector('.btn-adopt').setAttribute('disabled', true);
+                    parent.querySelector('.btn-adopt').textContent = "Success";
+                    parent.querySelector('.btn-revert').removeAttribute('disabled');
+//                    $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
                 }
+
             }
         }).catch(function (err) {
             console.log(err.message);
         });
+    },
+
+    handleRevert: function(event){
+        event.preventDefault();
+
+        var petId = parseInt($(event.target).data('id'));
+
+        var revertInstance;
+
+        web3.eth.getAccounts(function (error, accounts) {
+            if (error) {
+                console.log(error);
+            }
+
+            var account = accounts[0];
+
+            App.contracts.Adoption.deployed().then(function (instance) {
+                console.log(instance);
+                revertInstance = instance;
+
+                // Execute adopt as a transaction by sending account
+                return revertInstance.revert(petId, {from: account});
+//                  return adoptionInstance.adopt(petId, {from: account});
+            }).then(function (result) {
+                return App.markRevert();
+            }).catch(function (err) {
+                console.log(err.message);
+            });
+        });
+
     },
 
     handleAdopt: function (event) {
@@ -214,6 +282,7 @@ App = {
                 console.log(petId);
                 console.log(account);
                 return favorInstance.like(petId, {from: account});
+//                return 0;
             }).then(function (result) {
                 return App.markLiked();
             }).catch(function (err) {
