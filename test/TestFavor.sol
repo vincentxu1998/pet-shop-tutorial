@@ -16,6 +16,7 @@ contract TestFavor {
 
   // Testing the adopt() function
   function testUserCanLikePet() public {
+    favor.like(expectedPetId);
     uint returnedId = favor.like(expectedPetId);
 
     Assert.equal(returnedId, expectedPetId, "Favor of the expected pet should match what is returned.");
