@@ -1355,7 +1355,7 @@ body {
     font-size: 14px;
     line-height: 1.42857143;
     color: #333;
-    background-color: #fff
+    background-color: #b2adad;
 }
 
 button, input, select, textarea {
@@ -1478,7 +1478,8 @@ hr {
 }
 
 .h1, h1 {
-    font-size: 36px
+    font-size: 50px;
+    font-family: fantasy;
 }
 
 .h2, h2 {
@@ -5865,7 +5866,10 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:focus, a.list-g
 }
 
 .panel-body {
-    padding: 15px
+    padding: 15px;
+    background-color: #d4dade;
+    height:380px;
+    position: relative;
 }
 
 .panel-heading {
@@ -6045,7 +6049,7 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:focus, a.list-g
 
 .panel-default > .panel-heading {
     color: #333;
-    background-color: #f5f5f5;
+    background-color: #959090;
     border-color: #ddd
 }
 
@@ -7213,8 +7217,33 @@ button.close {
     }
 }
 
+.comment-section{
+    float: right;
+
+}
+.dislike-button{
+    float: right;
+}
 .like-button{
-    float: right
+    float: left;
+}
+
+.like-text{
+    margin-right: 5px;
+    margin-left: 3px;
+    font-size: 17px;
+}
+
+.dislike-text{
+    margin-left: 3px;
+    font-size: 17px;
+}
+.like-icon{
+    float:left;
+}
+.dislike-icon{
+    transform: rotate(180deg);
+    float: left;
 }
 .icobutton{
   font-size:3em;
@@ -7260,5 +7289,38 @@ button.close {
     -webkit-align-content: center;
     align-content: center;
 }
+
+.top {
+    opacity: 70%;
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    /* border: 1px solid black; */
+    z-index: 1;
+    max-height: 30%;
+}
+
+.image-containter{
+    height: 40%;
+    width: 100%;
+
+}
+
+.below-section{
+    height: 30%;
+    width: 80%;
+    display: inline;
+
+
+}
+
+.content-text{
+    height: 30%;
+    width: 80%;
+
+
+}
+
+
 
 /*# sourceMappingURL=bootstrap.min.css.map */

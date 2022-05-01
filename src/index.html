@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Pete's Pet Shop</title>
+    <title>News Validator</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +21,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
-            <h1 class="text-center">Pete's Pet Shop</h1>
+            <h1 class="text-center">News Validator</h1>
             <hr/>
             <br/>
         </div>
@@ -39,25 +39,45 @@
                 <h3 class="panel-title">Scrappy</h3>
             </div>
             <div class="panel-body">
-                <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;"
+                <div class="image-containter">
+                <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%; object-fit: cover; height: 100%;"
                      src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg"
                      data-holder-rendered="true">
+                <img class ="top" src="images/fake.png">
+                </div>
                 <br/><br/>
-                <strong>Breed</strong>: <span class="pet-breed">Golden Retriever</span><br/>
-                <strong>Age</strong>: <span class="pet-age">3</span><br/>
-                <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br/><br/>
-                <span class="pet-price">$200</span>
-                <a href=" " class="like-button">
-                    <?xml version="1.0" encoding="utf-8"?>
-                    <svg width="20" height="20" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M320 1344q0-26-19-45t-45-19q-27 0-45.5 19t-18.5 45q0 27 18.5 45.5t45.5 18.5q26 0 45-18.5t19-45.5zm160-512v640q0 26-19 45t-45 19h-288q-26 0-45-19t-19-45v-640q0-26 19-45t45-19h288q26 0 45 19t19 45zm1184 0q0 86-55 149 15 44 15 76 3 76-43 137 17 56 0 117-15 57-54 94 9 112-49 181-64 76-197 78h-129q-66 0-144-15.5t-121.5-29-120.5-39.5q-123-43-158-44-26-1-45-19.5t-19-44.5v-641q0-25 18-43.5t43-20.5q24-2 76-59t101-121q68-87 101-120 18-18 31-48t17.5-48.5 13.5-60.5q7-39 12.5-61t19.5-52 34-50q19-19 45-19 46 0 82.5 10.5t60 26 40 40.5 24 45 12 50 5 45 .5 39q0 38-9.5 76t-19 60-27.5 56q-3 6-10 18t-11 22-8 24h277q78 0 135 57t57 135z"/>
-                    </svg>
-                    <span class="like-text">0</span>
-                </a>
+                <div class="content-text">
+                <strong>Producer</strong>: <span class="pet-breed">Golden Retriever</span><br/>
+                <strong>Authenticity</strong>: <span class="news-authenticity">Fake</span><br/>
+                <strong>Location</strong>: <span class="pet-location">Warren, MI</span><br/>
+                    </div>
+<!--                <span class="pet-price">$200</span>-->
+                <div class="below-section">
+                <button class="btn btn-default btn-adopt" type="button" data-id="0">Own</button>
+                <button class="btn btn-default btn-revert" type="button" data-id="0">Return</button>
 
-                <button class="btn btn-default btn-adopt" type="button" data-id="0">Adopt</button>
-                <button class="btn btn-default btn-revert" type="button" data-id="0">Revert</button>
+                <div class="comment-section">
+                    <div class="like-button">
+                        <div class="like-icon">
+                        <?xml version="1.0" encoding="utf-8"?>
+                        <svg width="25" height="25" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M320 1344q0-26-19-45t-45-19q-27 0-45.5 19t-18.5 45q0 27 18.5 45.5t45.5 18.5q26 0 45-18.5t19-45.5zm160-512v640q0 26-19 45t-45 19h-288q-26 0-45-19t-19-45v-640q0-26 19-45t45-19h288q26 0 45 19t19 45zm1184 0q0 86-55 149 15 44 15 76 3 76-43 137 17 56 0 117-15 57-54 94 9 112-49 181-64 76-197 78h-129q-66 0-144-15.5t-121.5-29-120.5-39.5q-123-43-158-44-26-1-45-19.5t-19-44.5v-641q0-25 18-43.5t43-20.5q24-2 76-59t101-121q68-87 101-120 18-18 31-48t17.5-48.5 13.5-60.5q7-39 12.5-61t19.5-52 34-50q19-19 45-19 46 0 82.5 10.5t60 26 40 40.5 24 45 12 50 5 45 .5 39q0 38-9.5 76t-19 60-27.5 56q-3 6-10 18t-11 22-8 24h277q78 0 135 57t57 135z"/>
+                        </svg>
+                        </div>
+                        <span class="like-text">0</span>
+                    </div>
 
+                    <div class="dislike-button">
+                        <div class="dislike-icon">
+                        <?xml version="1.0" encoding="utf-8"?>
+                        <svg width="25" height="25" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M320 1344q0-26-19-45t-45-19q-27 0-45.5 19t-18.5 45q0 27 18.5 45.5t45.5 18.5q26 0 45-18.5t19-45.5zm160-512v640q0 26-19 45t-45 19h-288q-26 0-45-19t-19-45v-640q0-26 19-45t45-19h288q26 0 45 19t19 45zm1184 0q0 86-55 149 15 44 15 76 3 76-43 137 17 56 0 117-15 57-54 94 9 112-49 181-64 76-197 78h-129q-66 0-144-15.5t-121.5-29-120.5-39.5q-123-43-158-44-26-1-45-19.5t-19-44.5v-641q0-25 18-43.5t43-20.5q24-2 76-59t101-121q68-87 101-120 18-18 31-48t17.5-48.5 13.5-60.5q7-39 12.5-61t19.5-52 34-50q19-19 45-19 46 0 82.5 10.5t60 26 40 40.5 24 45 12 50 5 45 .5 39q0 38-9.5 76t-19 60-27.5 56q-3 6-10 18t-11 22-8 24h277q78 0 135 57t57 135z"/>
+                        </svg>
+                        </div>
+                        <span class="dislike-text">0</span>
+                    </div>
+                </div>
+                </div>
 
             </div>
         </div>

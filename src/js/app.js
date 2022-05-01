@@ -10,13 +10,15 @@ App = {
 
             for (i = 0; i < data.length; i++) {
                 petTemplate.find('.panel-title').text(data[i].name);
-                petTemplate.find('img').attr('src', data[i].picture);
+                petTemplate.find('.img-center').attr('src', data[i].picture);
                 petTemplate.find('.pet-breed').text(data[i].breed);
                 petTemplate.find('.pet-age').text(data[i].age);
                 petTemplate.find('.pet-location').text(data[i].location);
+                petTemplate.find('.news-authenticity').attr('data-id', data[i].id);
                 petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
                 petTemplate.find('.btn-revert').attr('data-id', data[i].id);
                 petTemplate.find('.like-text').attr('data-id', data[i].id);
+                petTemplate.find('.dislike-text').attr('data-id', data[i].id);
                 petTemplate.find('.pet-price').text("$" + data[i].price);
                 petsRow.append(petTemplate.html());
             }
@@ -74,7 +76,10 @@ App = {
             App.contracts.Favor.setProvider(App.web3Provider);
 
             // Use our contract to retrieve and mark the adopted pets
-            return App.markLiked();
+            App.markLiked();
+            console.log("call mark real 1");
+            App.markReal();
+            return App.markDisliked();
         });
 
         return App.bindEvents();
@@ -83,6 +88,7 @@ App = {
     bindEvents: function () {
         $(document).on('click', '.btn-adopt', App.handleAdopt);
         $(document).on('click', '.like-button', App.handleLike);
+        $(document).on('click', '.dislike-button', App.handleDislike);
         $(document).on('click', '.btn-revert', App.handleRevert);
     },
 
@@ -93,10 +99,54 @@ App = {
             likeInstance = instance;
 
             return likeInstance.getFavors.call();
-        }).then(function (adopters) {
-            for (i = 0; i < adopters.length; i++) {
+        }).then(function (favors) {
+            for (i = 0; i < favors.length; i++) {
                 let parent = $('.panel-pet').eq(i)[0];
-                parent.querySelector('.like-text').textContent = adopters[i].toString();
+                parent.querySelector('.like-text').textContent = favors[i].toString();
+            }
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+    },
+
+    markDisliked: function () {
+        var favorInstance;
+
+        App.contracts.Favor.deployed().then(function (instance) {
+            favorInstance = instance;
+
+            return favorInstance.getDisfavors.call();
+        }).then(function (disfavors) {
+            console.log(disfavors);
+            for (i = 0; i < disfavors.length; i++) {
+                let parent = $('.panel-pet').eq(i)[0];
+                parent.querySelector('.dislike-text').textContent = disfavors[i].toString();
+            }
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+    },
+
+    markReal: function () {
+        var favorInstance;
+
+
+        App.contracts.Favor.deployed().then(function (instance) {
+            favorInstance = instance;
+            console.log("RealORFake");
+            return favorInstance.getRealOrFake.call();
+        }).then(function (real_fake) {
+
+            console.log(real_fake);
+            for (i = 0; i < real_fake.length; i++) {
+                let parent = $('.panel-pet').eq(i)[0];
+                if (real_fake[i] == true){
+                    parent.querySelector('.news-authenticity').textContent = 'Real';
+                    parent.querySelector('.top').src = "images/true.png";
+                }else{
+                    parent.querySelector('.news-authenticity').textContent = 'Fake';
+                    parent.querySelector('.top').src = "images/fake.png";
+                }
             }
         }).catch(function (err) {
             console.log(err.message);
@@ -118,7 +168,7 @@ App = {
                     let parent = $('.panel-pet').eq(i)[0];
                     parent.querySelector('.btn-revert').setAttribute('disabled', true);
                     parent.querySelector('.btn-adopt').removeAttribute('disabled');
-                    parent.querySelector('.btn-adopt').textContent = "Adopt";
+                    parent.querySelector('.btn-adopt').textContent = "Own";
                 }
             }
         }).catch(function (err) {
@@ -142,34 +192,26 @@ App = {
 
 
             App.contracts.Adoption.deployed().then(function (instance) {
-                console.log("hahahah iamin");
                 adoptionInstance = instance;
-                console.log("adoptioninstance");
-                console.log(adoptionInstance);
-
                 // Execute adopt as a transaction by sending account
 
                return adoptionInstance.getAdopters.call();
             }).then(function (adopters) {
                 // check whether the account has adopted any pets
-                console.log("adopters");
-                console.log(adopters);
-                console.log("account");
-                console.log(account);
                 for (i = 0; i < adopters.length; i++) {
                     if (adopters[i] == account) {
                         let parent = $('.panel-pet').eq(i)[0];
                         console.log(parent.querySelector('.btn-revert'));
 //                        parent.querySelector('.btn-revert').setAttribute('editable', true);
                         parent.querySelector('.btn-revert').removeAttribute('disabled');
-                        parent.querySelector('.btn-adopt').textContent = "Success";
+                        parent.querySelector('.btn-adopt').textContent = "Own";
                         parent.querySelector('.btn-adopt').setAttribute('disabled', true);
                     }
                     else{
                         let parent = $('.panel-pet').eq(i)[0];
                         parent.querySelector('.btn-revert').setAttribute('disabled', true);
                         parent.querySelector('.btn-adopt').removeAttribute('disabled');
-                        parent.querySelector('.btn-adopt').textContent = "Adopt";
+                        parent.querySelector('.btn-adopt').textContent = "Own";
 //                        parent.querySelector('.btn-revert').setAttribute('editable', false);
                     }
                 }
@@ -180,6 +222,32 @@ App = {
     },
 
     markAdopted: function () {
+        var adoptionInstance;
+
+        App.contracts.Adoption.deployed().then(function (instance) {
+            adoptionInstance = instance;
+
+            return adoptionInstance.getAdopters.call();
+        }).then(function (adopters) {
+            console.log(adopters);
+            for (i = 0; i < adopters.length; i++) {
+                if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
+                    console.log("mark adopt");
+                    console.log(i);
+                    let parent = $('.panel-pet').eq(i)[0];
+                    parent.querySelector('.btn-adopt').setAttribute('disabled', true);
+                    parent.querySelector('.btn-adopt').textContent = "Success";
+                    parent.querySelector('.btn-revert').removeAttribute('disabled');
+//                    $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
+                }
+
+            }
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+    },
+
+        markAdopted: function () {
         var adoptionInstance;
 
         App.contracts.Adoption.deployed().then(function (instance) {
@@ -257,6 +325,7 @@ App = {
                 console.log(account);
                 return adoptionInstance.adopt(petId, {from: account});
             }).then(function (result) {
+                App.markReal();
                 return App.markAdopted();
             }).catch(function (err) {
                 console.log(err.message);
@@ -266,8 +335,11 @@ App = {
 
     handleLike: function(event){
         event.preventDefault();
-        var petId = parseInt($(event.target.parentElement.parentElement.querySelector('.like-text')).data('id'));
+        console.log(event.target.parentElement.parentElement.parentElement);
+        var petId = parseInt($(event.target.parentElement.parentElement.parentElement.querySelector('.like-text')).data('id'));
 
+        console.log("Like")
+        console.log(petId)
         var favorInstance;
 
         web3.eth.getAccounts(function (error, accounts) {
@@ -284,7 +356,37 @@ App = {
                 return favorInstance.like(petId, {from: account});
 //                return 0;
             }).then(function (result) {
+                App.markReal();
                 return App.markLiked();
+            }).catch(function (err) {
+                console.log(err.message);
+            });
+        });
+    },
+
+    handleDislike: function(event){
+        event.preventDefault();
+        var petId = parseInt($(event.target.parentElement.parentElement.parentElement.querySelector('.dislike-text')).data('id'));
+        console.log(petId);
+
+        var favorInstance;
+
+        web3.eth.getAccounts(function (error, accounts) {
+            if (error) {
+                console.log(error);
+            }
+            var account = accounts[0];
+            App.contracts.Favor.deployed().then(function (instance) {
+                favorInstance = instance;
+
+                // Execute adopt as a transaction by sending account
+                console.log(petId);
+                console.log(account);
+                return favorInstance.dislike(petId, {from: account});
+//                return 0;
+            }).then(function (result) {
+                App.markReal();
+                return App.markDisliked();
             }).catch(function (err) {
                 console.log(err.message);
             });
